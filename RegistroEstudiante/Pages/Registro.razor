@@ -1,0 +1,43 @@
+﻿
+@page "/Registro"
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Registro de Estudiantes</h3>
+        </div>
+
+
+
+        <label>EstudianteId
+        
+            <input @bind=" EstudianteId" />
+        </label>
+        
+
+
+        <div class="form-group">
+            <label> Nombres </label>
+
+        </div>
+
+        <div class="form-group">
+            <label> Semestre </label>
+
+        </div>
+
+        <div class="card-footer">
+            <div class="form-group text-center" display: inline-block>
+                <button type="button"> Nuevo </button>
+                <button type="submit"> Guardar </button>
+                <button type="button"> Eliminar </button>
+            </div>
+        </div>
+    </div>
+
+
+@code {
+
+    public int EstudianteId;
+
+
+}
