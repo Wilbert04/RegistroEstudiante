@@ -1,43 +1,135 @@
-﻿
-@page "/Registro"
+﻿@page "/Registro"
+
+@inject IToastService toast
+
+@using RegistroEstudiante.Models
+@using RegistroEstudiante.BLL
+@using Blazored.Toast
+@using Blazored.Toast.Services
+
+<EditForm Model="estudiantes" OnInvalidSubmit="Guardar">
+    <DataAnnotationsValidator />
 
     <div class="card">
         <div class="card-header">
-            <h3>Registro de Estudiantes</h3>
+            <h3> Registro de estudiantes </h3>
         </div>
 
 
+        <div class="card-body">
+            <form>
+                @*EstudianteID*@
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Estudiante.ID</label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="estudiantes.EstudianteID" class="form-control col-4" />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary input-group-text" @onclick="Buscar"> Buscar </button>
+                                </div>
+                            </div>
 
-        <label>EstudianteId
-        
-            <input @bind=" EstudianteId" />
-        </label>
-        
+                        </div>
+                    </div>
+                </div>
+
+                @*Nombre*@
+                <div class="form-group">
+
+                    <label> Nombre:</label>
+                    <InputText @bind-Value="estudiantes.Nombre" class="form-control col-5" />
+                    <ValidationMessage For="@(() => estudiantes.Nombre)" />
+
+                </div>
+
+                @*Semestre*@
+                <div class="form-group">
+                    <label> Semestre: </label>
+                    <InputNumber @bind-Value="estudiantes.Semestre" class="form-control col-6" />
+                </div>
 
 
-        <div class="form-group">
-            <label> Nombres </label>
-
-        </div>
-
-        <div class="form-group">
-            <label> Semestre </label>
-
-        </div>
-
-        <div class="card-footer">
-            <div class="form-group text-center" display: inline-block>
-                <button type="button"> Nuevo </button>
-                <button type="submit"> Guardar </button>
-                <button type="button"> Eliminar </button>
-            </div>
+            </form>
         </div>
     </div>
 
+    <div class="card-footer">
+        <div class="form-group text-center" display: inline-block>
+            <button type="button" class="btn btn-lg btn-primary" @onclick="Nuevo">Nuevo </button>
+            <button type="submit" class="btn btn-lg btn-success">Guardar </button>
+            <button type="button" class="btn btn-lg btn-danger" @onclick="Eliminar">Eliminar </button>
+        </div>
+    </div>
+
+</EditForm>
 
 @code {
 
-    public int EstudianteId;
+    [Parameter]
+    public int EstudienteID { get; set; }
+
+    private Estudiantes estudiantes = new Estudiantes();
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+        Buscar();
+    }
+
+    public void Nuevo()
+    {
+        estudiantes = new Estudiantes();
+    }
+
+    private void Buscar()
+    {
+
+        if (estudiantes.EstudianteID > 0)
+        {
+            var encontrado = EstudiantesBLL.Buscar(estudiantes.EstudianteID);
+
+            if (encontrado != null)
+                this.estudiantes = encontrado;
+            else
+                toast.ShowWarning("No encontrado");
+        }
+    }
+
+    private void Guardar()
+    {
+        bool guardo;
+
+        guardo = EstudiantesBLL.Guardar(estudiantes);
+
+        if (guardo)
+        {
+
+            toast.ShowSuccess("Guardado Correctamente");
+            Nuevo();
+
+        }
+        else
+            toast.ShowError("No fue posible guardar");
+    }
+
+    public void Eliminar()
+    {
+        bool elimino;
+
+        elimino = EstudiantesBLL.Eliminar(estudiantes.EstudianteID);
+
+        if (elimino)
+        {
+            Nuevo();
+            toast.ShowSuccess("Eliminado Correctamente");
+
+        }
+        else
+            toast.ShowError("No fue posible eliminar");
+    }
+
+
 
 
 }
